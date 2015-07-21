@@ -1,0 +1,127 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cstdio>
+using namespace std;
+
+struct record{
+	string pNumber;
+	int tt;
+	bool in;
+};
+
+bool cmpNumber(record r1, record r2){
+	return r1.pNumber < r2.pNumber || (r1.pNumber == r2.pNumber && r1.tt < r2.tt);
+}
+
+bool cmpTime(record r1, record r2){
+	return r1.tt < r2.tt;
+}
+
+int main(){
+	int n, k;
+	cin >> n >> k;
+	vector<record> records(n);
+	for (int i = 0; i < n; ++i){
+		int hh, mm, ss;
+		string tmp;
+		cin >> records[i].pNumber;
+		scanf("%d:%d:%d", &hh, &mm, &ss);
+		cin >> tmp;
+		records[i].tt = (hh * 60 + mm) * 60 + ss;
+		records[i].in = tmp[0] == 'i';
+	}
+	sort(records.begin(), records.end(), cmpNumber);
+	vector<record> validRecords;
+	vector<string> resNumbers;
+	int total = -1, longest = 0, last_in;
+	string tmp;
+	bool first = 1, in = 1;
+	for (int i = 0; i < n; ++i){
+		if (first || tmp != records[i].pNumber){
+			first = 0;
+			if (!in){
+				validRecords.pop_back();
+			}
+			if (total > longest){
+				resNumbers.clear();
+				resNumbers.push_back(tmp);
+				longest = total;
+			}
+			else if (total == longest){
+                            resNumbers.push_back(tmp);
+			}
+			tmp = records[i].pNumber;
+			in = 1;
+			total = 0;
+		}
+		if (in){
+			if (records[i].in){
+				validRecords.push_back(records[i]);
+				in = 0;
+				last_in = records[i].tt;
+			}
+		}
+		else{
+			if (records[i].in){
+				validRecords.pop_back();
+				validRecords.push_back(records[i]);
+				last_in = records[i].tt;
+			}
+			else{
+				validRecords.push_back(records[i]);
+				total += records[i].tt - last_in;
+                 
+				in = 1;
+			}
+		}
+	}
+
+  
+        for(int i = 0;i < resNumbers.size();i++)
+          cout<<resNumbers[i]<<endl;
+
+	if (!in){
+		validRecords.pop_back();
+	}
+	if (total > longest){
+		resNumbers.clear();
+		resNumbers.push_back(tmp);
+		longest = total;
+      
+	}
+	else if (total == longest){
+		resNumbers.push_back(tmp);
+	}
+
+        for(int i = 0;i < resNumbers.size();i++)
+          cout<<resNumbers[i]<<endl;
+
+
+  	sort(validRecords.begin(), validRecords.end(), cmpTime);
+        
+        int index = 0, cnt = 0;
+	for (int i = 0; i < k; ++i){
+		int hh, mm, ss, tt;
+		scanf("%d:%d:%d", &hh, &mm, &ss);
+		tt = (hh * 60 + mm) * 60 + ss;
+		while (index < validRecords.size() && validRecords[index].tt <= tt){
+			if (validRecords[index].in){
+				++cnt;
+			}
+			else{
+				--cnt;
+			}
+			++index;
+		}
+		cout << cnt << endl;
+	}
+	sort(resNumbers.begin(), resNumbers.end());
+        for (auto i : resNumbers){
+		cout << i << " ";
+	}
+	printf("%02d:%02d:%02d", longest / 3600, (longest / 60) % 60, longest % 60);
+
+	return 0;
+}
