@@ -29,7 +29,7 @@ int main(){
     Array.push_back(Digit);
  }
 
-  for(int i = 0; i < A.size(); i++){
+  for(unsigned int i = 0; i < A.size(); i++){
     InsertionSort(A,i);
     while(equal(A.begin(),A.end(),Array.begin())){
        InsertionSort(A,++i); 
@@ -113,11 +113,11 @@ void Merge(vector <int> &A,int p,int q,int r){
 */
 
 void MergeSortIteration(vector <int> &A,int step){
-     int len = 1;  
+     unsigned int len = 1;  
      int count = 1;
-     while(len/2 < A.size()){
+     while(len / 2 < A.size()){
       if(A.size() / len > 0){
-       for(int i = 0;i <= A.size() - len ; i += len){
+       for(unsigned int i = 0;i <= A.size() - len ; i += len){
          sort(A.begin() + i,A.begin() + i + len);
        }
       }
